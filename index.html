@@ -209,18 +209,13 @@
         ctx.fillText(formatted, 60, 580);
       }
 
-      // Hardal wordmark top-right
-      ctx.fillStyle = COLORS.purple;
-      ctx.font = '700 30px sans-serif';
-      ctx.textAlign = 'right';
-      ctx.fillText('hardal', 1140, 88);
-      ctx.textAlign = 'left';
-
-      // Green dot next to wordmark
-      ctx.beginPath();
-      ctx.arc(1148, 78, 5, 0, Math.PI * 2);
-      ctx.fillStyle = COLORS.green;
-      ctx.fill();
+     // Hardal logo top-right
+      const logo = new Image();
+      logo.crossOrigin = 'anonymous';
+      logo.src = 'https://res.cloudinary.com/hardal/image/upload/v1753259111/logo/new/svg/hnav0hronsb1fttdnmph.svg';
+      logo.onload = () => {
+        ctx.drawImage(logo, 1020, 55, 120, 50);
+      };
     }
 
     function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
@@ -271,7 +266,7 @@
 
     window.onload = () => {
       document.getElementById('title').value  = 'Top 10 Cookieless Analytics Platforms in 2026';
-      document.getElementById('author').value = 'Hardal Team';
+      document.getElementById('author').value = 'Camila Cescutti';
       document.getElementById('date').value   = new Date().toISOString().split('T')[0];
       generate();
     };
