@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hardal OG Image Generator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: sans-serif;
+      background: #141020;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 8px;
+      color: #FFFFFF;
+    }
+
+    p.subtitle {
+      color: #A082FF;
+      margin-bottom: 32px;
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .form-section {
+      background: #1e1830;
+      border: 1px solid #2a2040;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #A082FF;
+      margin-bottom: 6px;
+      margin-top: 16px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px 14px;
+      background: #141020;
+      border: 1px solid #2a2040;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #FFFFFF;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #A082FF;
+    }
+
+    select option { background: #141020; }
+
+    button {
+      margin-top: 24px;
+      width: 100%;
+      padding: 12px;
+      background: #A082FF;
+      color: #141020;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    button:hover { opacity: 0.85; }
+
+    .preview-section {
+      background: #1e1830;
+      border: 1px solid #2a2040;
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .preview-section h2 {
+      font-size: 16px;
+      margin-bottom: 16px;
+      color: #FFFFFF;
+    }
+
+    canvas {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #2a2040;
+      display: block;
+    }
+
+    .download-btn {
+      margin-top: 16px;
+      background: #E1FF82;
+      color: #141020;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <h1>Hardal OG Image Generator</h1>
+    <p class="subtitle">Generate Open Graph images for blog posts — 1200×630px</p>
+
+    <div class="form-section">
+      <label>Post title</label>
+      <input type="text" id="title" placeholder="Top 10 Cookieless Analytics Platforms in 2026" />
+
+      <label>Author</label>
+      <input type="text" id="author" placeholder="Berkay Demirbas" />
+
+      <label>Category</label>
+      <select id="category">
+        <option>Analytics</option>
+        <option>Server-side Tracking</option>
+        <option>Cookieless</option>
+        <option>Growth</option>
+        <option>Product</option>
+      </select>
+
+      <label>Date</label>
+      <input type="date" id="date" />
+
+      <button onclick="generate()">Generate image</button>
+    </div>
+
+    <div class="preview-section">
+      <h2>Preview</h2>
+      <canvas id="canvas" width="1200" height="630"></canvas>
+      <button class="download-btn" onclick="download()">⬇ Download image</button>
+    </div>
+
+  </div>
+
+  <script>
+    const COLORS = {
+      navy:   '#141020',
+      purple: '#A082FF',
+      green:  '#E1FF82',
+      white:  '#FFFFFF',
+    };
+
+    function generate() {
+      const title    = document.getElementById('title').value    || 'Your blog post title';
+      const author   = document.getElementById('author').value   || 'Hardal Team';
+      const category = document.getElementById('category').value || 'Analytics';
+      const date     = document.getElementById('date').value     || '';
+
+      const canvas = document.getElementById('canvas');
+      const ctx    = canvas.getContext('2d');
+
+      // Background
+      ctx.fillStyle = COLORS.navy;
+      ctx.fillRect(0, 0, 1200, 630);
+
+      // Subtle purple glow top-left
+      const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, 700);
+      glow.addColorStop(0, 'rgba(160, 130, 255, 0.2)');
+      glow.addColorStop(1, 'rgba(160, 130, 255, 0)');
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, 1200, 630);
+
+      // Green accent line top
+      ctx.fillStyle = COLORS.green;
+      ctx.fillRect(0, 0, 1200, 5);
+
+      // Category badge
+      ctx.font = '700 16px sans-serif';
+      const badgeText = category.toUpperCase();
+      const badgeWidth = ctx.measureText(badgeText).width + 40;
+      roundRect(ctx, 60, 60, badgeWidth, 36, 18, COLORS.purple);
+      ctx.fillStyle = COLORS.navy;
+      ctx.font = '700 16px sans-serif';
+      ctx.fillText(badgeText, 80, 83);
+
+      // Title
+      ctx.fillStyle = COLORS.white;
+      ctx.font = '700 62px sans-serif';
+      wrapText(ctx, title, 60, 180, 1080, 78);
+
+      // Divider
+      ctx.fillStyle = COLORS.green;
+      ctx.fillRect(60, 490, 60, 4);
+
+      // Author
+      ctx.fillStyle = COLORS.white;
+      ctx.font = '500 26px sans-serif';
+      ctx.fillText(`By ${author}`, 60, 545);
+
+      // Date
+      if (date) {
+        const formatted = new Date(date + 'T00:00:00').toLocaleDateString('en-US', {
+          year: 'numeric', month: 'long', day: 'numeric'
+        });
+        ctx.fillStyle = '#6b5fa0';
+        ctx.font = '400 22px sans-serif';
+        ctx.fillText(formatted, 60, 580);
+      }
+
+      // Hardal wordmark top-right
+      ctx.fillStyle = COLORS.purple;
+      ctx.font = '700 30px sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText('hardal', 1140, 88);
+      ctx.textAlign = 'left';
+
+      // Green dot next to wordmark
+      ctx.beginPath();
+      ctx.arc(1148, 78, 5, 0, Math.PI * 2);
+      ctx.fillStyle = COLORS.green;
+      ctx.fill();
+    }
+
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = text.split(' ');
+      let line = '';
+      for (let i = 0; i < words.length; i++) {
+        const test = line + words[i] + ' ';
+        if (ctx.measureText(test).width > maxWidth && i > 0) {
+          ctx.fillText(line.trim(), x, y);
+          line = words[i] + ' ';
+          y += lineHeight;
+          if (y > 440) break; // prevent overflow
+        } else {
+          line = test;
+        }
+      }
+      ctx.fillText(line.trim(), x, y);
+    }
+
+    function roundRect(ctx, x, y, w, h, r, color) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function download() {
+      const canvas = document.getElementById('canvas');
+      const link   = document.createElement('a');
+      link.download = 'hardal-og-image.png';
+      link.href     = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    window.onload = () => {
+      document.getElementById('title').value  = 'Top 10 Cookieless Analytics Platforms in 2026';
+      document.getElementById('author').value = 'Hardal Team';
+      document.getElementById('date').value   = new Date().toISOString().split('T')[0];
+      generate();
+    };
+  </script>
+</body>
+</html>
