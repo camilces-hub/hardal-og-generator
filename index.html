@@ -257,11 +257,15 @@
     }
 
     function download() {
-      const canvas = document.getElementById('canvas');
-      const link   = document.createElement('a');
+      generate();
+    
+      const title = document.getElementById('title').value || 'hardal-post';
       const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    
+      const canvas = document.getElementById('canvas');
+      const link = document.createElement('a');
       link.download = `hardal-og-${slug}.png`;
-      link.href     = canvas.toDataURL('image/png');
+      link.href = canvas.toDataURL('image/png');
       link.click();
     }
 
