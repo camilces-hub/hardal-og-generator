@@ -209,12 +209,15 @@
         ctx.fillText(formatted, 60, 580);
       }
 
-     // Hardal logo top-right
+          // Hardal white logo top-right (white version for dark backgrounds)
       const logo = new Image();
       logo.crossOrigin = 'anonymous';
-      logo.src = 'https://res.cloudinary.com/hardal/image/upload/v1753259111/logo/new/svg/hnav0hronsb1fttdnmph.svg';
+      logo.src = 'https://res.cloudinary.com/hardal/image/upload/v1753201051/logo/new/svg/o9vnmleauvr2t5xvn9xe.svg';
       logo.onload = () => {
-        ctx.drawImage(logo, 1020, 55, 120, 50);
+        // Maintain aspect ratio: draw at fixed height, calculate width proportionally
+        const logoHeight = 36;
+        const logoWidth = (logo.naturalWidth / logo.naturalHeight) * logoHeight;
+        ctx.drawImage(logo, 1140 - logoWidth, 58, logoWidth, logoHeight);
       };
     }
 
