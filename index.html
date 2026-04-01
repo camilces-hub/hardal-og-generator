@@ -209,37 +209,19 @@
         ctx.fillText(formatted, 60, 580);
       }
 
-                  // Hardal white logo — drawn via offscreen canvas to preserve transparency
-        const logo = new Image();
-        logo.crossOrigin = 'anonymous';
-        logo.src = 'https://res.cloudinary.com/hardal/image/upload/v1753201051/logo/new/svg/o9vnmleauvr2t5xvn9xe.svg';
-        logo.onload = () => {
-          const logoHeight = 32;
-          const logoWidth = (logo.naturalWidth / logo.naturalHeight) * logoHeight;
-        
-          // Draw on offscreen canvas to extract pixel data cleanly
-          const offscreen = document.createElement('canvas');
-          offscreen.width = logoWidth;
-          offscreen.height = logoHeight;
-          const octx = offscreen.getContext('2d');
-          octx.drawImage(logo, 0, 0, logoWidth, logoHeight);
-        
-          // Tint all pixels to white preserving alpha
-          const imageData = octx.getImageData(0, 0, logoWidth, logoHeight);
-          const data = imageData.data;
-          for (let i = 0; i < data.length; i += 4) {
-            if (data[i + 3] > 0) {
-              data[i] = 255;     // R
-              data[i + 1] = 255; // G
-              data[i + 2] = 255; // B
-              // alpha preserved as-is
-            }
-          }
-          octx.putImageData(imageData, 0, 0);
-        
-          // Draw the white logo onto the main canvas
-          ctx.drawImage(offscreen, 1140 - logoWidth, 56, logoWidth, logoHeight);
-        };
+                  // Hardal wordmark top-right — Geist font, white on dark
+      ctx.textAlign = 'right';
+      ctx.font = '600 28px "Geist", "Inter", sans-serif';
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillText('hardal', 1145, 82);
+
+      // Green dot accent after wordmark
+      ctx.beginPath();
+      ctx.arc(1155, 77, 5, 0, Math.PI * 2);
+      ctx.fillStyle = COLORS.green;
+      ctx.fill();
+
+      ctx.textAlign = 'left';
     }
 
     function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
